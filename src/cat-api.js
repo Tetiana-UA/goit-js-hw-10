@@ -26,7 +26,7 @@ export function fetchCatByBreed(id) {
 
     const params=new URLSearchParams({
         api_key:APY_KEY,
-        breed_ids:id,
+        breed_ids:breed.value,
     })
 
 return fetch(`${BASE_URL}/${ENDPOINT}?${params}`).then((response)=>{

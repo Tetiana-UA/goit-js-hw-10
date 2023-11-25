@@ -16,6 +16,8 @@
 import axios from "axios";
 axios.defaults.headers.common["x-api-key"] = "live_KhQV1oKIS4BCvrcPDeozPUb3E9SMkjS0ykizMr5iBCwxr7OS8E0iDtuzHjzD1OGJ";
 
+import SlimSelect from 'slim-select'
+
 import { fetchBreeds, fetchCatByBreed } from "./cat-api.js";
 
 const refs = {
@@ -24,44 +26,54 @@ const refs = {
     error: document.querySelector(".error"),
     catInfo: document.querySelector(".cat-info"),
 }
+new SlimSelect({
+    select: '#breed'
+  })
+
+refs.breedSelect.classList.add("isHidden");
+refs.loader.classList.add("isHidden");
+refs.error.classList.add("isHidden");
+console.log(refs.loader.classList);
 
 //Під час завантаження сторінки має виконуватися HTTP-запит за колекцією порід. Для цього необхідно виконати GET-запит на ресурс https://api.thecatapi.com/v1/breeds, що повертає масив об'єктів. У разі успішного запиту, необхідно наповнити select.breed-select опціями так, щоб value опції містило id породи, а в інтерфейсі користувачеві відображалася назва породи.
+const optionsMarkup = fetchBreeds()
+.then((breeds)=>{refs.breedSelect.innerHTML = breeds.map((breed)=>`<option value="${breed.id}">${breed.name}</option>`)
+.join("")
+})
+.catch((err)=>{
+    refs.error.classList.remove("isHidden");
+    console.log(err)});
+refs.breedSelect.innerHTML = optionsMarkup;
+refs.breedSelect.classList.remove("isHidden");
 
 
-function onLoad() {
-    fetchBreeds()
-    .then(({breeds})=>{
-    refs.breedSelect.innerHTML = createMarkupForSelect(breeds);
-    })
-    .catch((err)=>{
-    console.log(err);
-    })
-    .finally(()=>refs.breedSelect.reset());
-}
-    console.log(onLoad());
-       //breed.value=id!!!!!!!!
+//console.log(optionsMarkup); //value undefined???
+//console.log(fetchBreeds());
 
 
-refs.breedSelect.addEventListener("submit", handleSubmit);
 
 //Коли користувач обирає якусь опцію в селекті, необхідно виконувати запит за повною інформацією про кота на ресурс https://api.thecatapi.com/v1/images/search. Не забудь вказати в цьому запиті параметр рядка запиту breed_ids з ідентифікатором породи.
-function handleSubmit(event) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const { breed } = form.elements;
+refs.breedSelect.addEventListener("input", handleSubmit);
 
+function handleSubmit(event) {
+    const {breed} = event.currentTarget;
+    refs.catInfo.classList.add("isHidden");
+    refs.loader.classList.remove("isHidden");
 
     fetchCatByBreed(breed.value)
+        .then(({breed})=>{
+        refs.catInfo.innerHTML = createMarkup(breed);
+        })
+        .catch((err)=>{
+        console.log(err);
+        })
+        .finally(()=>select.reset());
 
-    .then(({breeds})=>{
-    refs.catInfo.innerHTML = createMarkup(breeds);
-    })
-    .catch((err)=>{
-    console.log(err);
-    })
-    .finally(()=>form.reset());
-    }
+    refs.loader.classList.add("isHidden");
 
+
+        console.log(fetchCatByBreed(breed.value)); //?????????????? breed1 is undefined
+}
 
 
 
@@ -80,15 +92,7 @@ function createMarkup(arr) {
     .join("");
 }
 
-function createMarkupForSelect(arr) {
-    return arr
-    .map(({
-        id,name
-    })=>` 
-    <option value="${id}">${name}</option>` 
-    )
-    .join("");
-}
+
 
 
 
