@@ -16,7 +16,7 @@
 import axios from "axios";
 axios.defaults.headers.common["x-api-key"] = "live_KhQV1oKIS4BCvrcPDeozPUb3E9SMkjS0ykizMr5iBCwxr7OS8E0iDtuzHjzD1OGJ";
 
-import SlimSelect from 'slim-select'
+//import SlimSelect from 'slim-select'
 
 import { fetchBreeds, fetchCatByBreed } from "./cat-api.js";
 
@@ -26,9 +26,9 @@ const refs = {
     error: document.querySelector(".error"),
     catInfo: document.querySelector(".cat-info"),
 }
-new SlimSelect({
+//new SlimSelect({
     select: '#breed'
-  })
+ // })
 
 refs.breedSelect.classList.add("isHidden");
 refs.loader.classList.add("isHidden");
