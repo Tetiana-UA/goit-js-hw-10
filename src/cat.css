@@ -4,5 +4,7 @@ visibility: hidden;
 }
 .isShown{
 visibility: visible;
-
+}
+.cat-card{
+    margin-top: 20px;
 }

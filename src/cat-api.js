@@ -19,14 +19,14 @@ return fetch(`${BASE_URL}/${ENDPOINT}?${params}`).then((response)=>{
 
 
 //Напиши функцію fetchCatByBreed(breedId), яка очікує ідентифікатор породи, робить HTTP-запит і повертає проміс із даними про кота - результатом запиту. Винеси її у файл cat-api.js і зроби іменований експорт.
-export function fetchCatByBreed(id) {
+export function fetchCatByBreed(breedId) {
     const BASE_URL  = "https://api.thecatapi.com/v1";
     const ENDPOINT = "images/search"
     const APY_KEY ="live_KhQV1oKIS4BCvrcPDeozPUb3E9SMkjS0ykizMr5iBCwxr7OS8E0iDtuzHjzD1OGJ"
 
     const params=new URLSearchParams({
         api_key:APY_KEY,
-        breed_ids:breed.value,
+        breed_ids:breedId,
     })
 
 return fetch(`${BASE_URL}/${ENDPOINT}?${params}`).then((response)=>{
