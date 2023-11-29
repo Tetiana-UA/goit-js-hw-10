@@ -2,8 +2,13 @@
 //........Використовуємо публічний The Cat API............................. 
 
 
+//Коли підключаю SlimSelect, не працює нічого. Щось можливо зі стилями.
 //import SlimSelect from 'slim-select';
 //import "slim-select/dist/slimselect.css";
+//new SlimSelect({
+ //   select: '#breed'
+//})
+
 import { fetchBreeds, fetchCatByBreed } from "./cat-api.js";
 
 const refs = {
@@ -13,9 +18,6 @@ const refs = {
     catInfo: document.querySelector(".cat-info"),
 }
 
-//new SlimSelect({
- //   select: '#breed'
-//})
 
 //Поки відбувається будь-який HTTP-запит, необхідно показувати завантажувач - елемент p.loader. А всі інші елементи приховати:
 refs.breedSelect.style.display= "none";
@@ -34,7 +36,7 @@ fetchBreeds()
         .join("")
     })
     .catch((err)=>{
-//Якщо у користувача сталася помилка під час будь-якого HTTP-запиту, наприклад, впала мережа, була втрата пакетів тощо, тобто проміс було відхилено, необхідно відобразити елемент p.error, а при кожному наступному запиті приховувати його. 
+    //Якщо у користувача сталася помилка під час будь-якого HTTP-запиту, наприклад, впала мережа, була втрата пакетів тощо, тобто проміс було відхилено, необхідно відобразити елемент p.error, а при кожному наступному запиті приховувати його. 
     refs.error.style.display= "block";
     //refs.error.classList.remove("isHidden");
     console.log(err);
@@ -71,8 +73,8 @@ function handleSelect(event) {
 }
 
 function createMarkup(data) {
-    const {url} = data[0];
-    const{name, description, temperament}=data[0].breeds[0];
+        const {url} = data[0]; //деструктуризуємо властивість url  обєкта в масиві breeds. Масив містять лише 1 обєкт без імені, тому до нього звертаємося під індексом 0. 
+        const{name, description, temperament}=data[0].breeds[0]; //деструктуризуємо властивості обєкта в масиві breeds, який у свою чергу знаходиться в масиві data. Обидва масиви містять лише по одному обєкту, тому до них звертаємося під індексом [0].
 
     return `<div class="cat-card">
     <img src="${url}" alt="${name} width="550" height="350>
@@ -87,4 +89,3 @@ function createMarkup(data) {
 
 
 
-//<link rel="stylesheet" href="./cat.css" />
