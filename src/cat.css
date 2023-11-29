@@ -8,3 +8,11 @@ visibility: visible;
 .cat-card{
     margin-top: 20px;
 }
+
+.breed-select{
+    border: 1px solid rgba(168, 45, 45, 0.84);
+    height: 30px;
+    border-radius: 5px;
+    background-color: white;
+    margin-bottom: 30px;
+}

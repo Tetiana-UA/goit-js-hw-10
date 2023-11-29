@@ -1,19 +1,9 @@
-//HTTP-запити
-//Використовуй публічний The Cat API. 
+//................HTTP-запити............................................
+//........Використовуємо публічний The Cat API............................. 
 
 
-
-//Поки відбувається будь-який HTTP-запит, необхідно показувати завантажувач - елемент p.loader. Поки запитів немає або коли запит завершився, завантажувач необхідно приховувати. Використовуй для цього додаткові CSS класи.
-
-//Якщо у користувача сталася помилка під час будь-якого HTTP-запиту, наприклад, впала мережа, була втрата пакетів тощо, тобто проміс було відхилено, необхідно відобразити елемент p.error, а при кожному наступному запиті приховувати його. Використовуй для цього додаткові CSS класи.
-
-//Додай мінімальне оформлення елементів інтерфейсу.
-
-
-//                           В И К О Н А Н Н Я
-
-//import SlimSelect from 'slim-select'
-
+//import SlimSelect from 'slim-select';
+//import "slim-select/dist/slimselect.css";
 import { fetchBreeds, fetchCatByBreed } from "./cat-api.js";
 
 const refs = {
@@ -22,41 +12,52 @@ const refs = {
     error: document.querySelector(".error"),
     catInfo: document.querySelector(".cat-info"),
 }
+
 //new SlimSelect({
  //   select: '#breed'
- // })
+//})
 
-refs.loader.style.display= "none";
+//Поки відбувається будь-який HTTP-запит, необхідно показувати завантажувач - елемент p.loader. А всі інші елементи приховати:
+refs.breedSelect.style.display= "none";
+refs.catInfo.style.display= "none";
+refs.loader.style.display= "block";
 refs.error.style.display= "none";
 //refs.loader.classList.add("isHidden");
 //refs.error.classList.add("isHidden");
 //console.log(refs.loader.classList);
 
-//Під час завантаження сторінки має виконуватися HTTP-запит за колекцією порід. Для цього необхідно виконати GET-запит на ресурс https://api.thecatapi.com/v1/breeds, що повертає масив об'єктів. У разі успішного запиту, необхідно наповнити select.breed-select опціями так, щоб value опції містило id породи, а в інтерфейсі користувачеві відображалася назва породи.
 
-//При завантаженні сторінки в селект записуємо результат функції fetchBreeds. Під час обробки результату функції, ми map-ємо 
+//Під час завантаження сторінки має виконуватися HTTP-запит за колекцією порід - тобто буде викликатися функція fetchBreeds. Під час обробки її результату (масиву breeds), ми map-ємо цей масив (з кожного обєкту масиву  витягуємо необхідні властивості (id, name) і наповнюємо (за доп.innerHTML) ними опції breedSelect так, щоб value опції містило id породи, а в інтерфейсі користувачеві відображалася назва породи:
 fetchBreeds()
     .then((breeds)=>{
         refs.breedSelect.innerHTML = breeds.map((breed)=>`<option value="${breed.id}">${breed.name}</option>`)
         .join("")
     })
     .catch((err)=>{
+//Якщо у користувача сталася помилка під час будь-якого HTTP-запиту, наприклад, впала мережа, була втрата пакетів тощо, тобто проміс було відхилено, необхідно відобразити елемент p.error, а при кожному наступному запиті приховувати його. 
     refs.error.style.display= "block";
     //refs.error.classList.remove("isHidden");
     console.log(err);
-    });
+    })
+    .finally(()=>{
+        refs.breedSelect.style.display= "block";
+        refs.loader.style.display= "none";
+    }
+    );
 
 
-//Коли користувач обирає якусь опцію в селекті, необхідно виконувати запит за повною інформацією про кота на ресурс https://api.thecatapi.com/v1/images/search. Не забудь вказати в цьому запиті параметр рядка запиту breed_ids з ідентифікатором породи.
+//Коли користувач обирає якусь опцію в селекті, необхідно виконувати запит за повною інформацією про кота,  тобто при події change в викливається функція fetchCatByBreed, якій для параметра рядка запиту breed_ids передається ідентифікатор породи breedId.
 refs.breedSelect.addEventListener("change", handleSelect);
 
 function handleSelect(event) {
     refs.loader.style.display= "block";
     //refs.loader.classList.remove("isHidden");
-    const breedId = event.target.value;
+
+    const breedId = event.target.value; //ідентифікатор породи беремо з вибраної опції селекту breedSelect, на якому висить слухач події (у опцій value=breed.id).
     
     fetchCatByBreed(breedId)
         .then((data)=>{
+        //Результат (data) виклику фунції fetchCatByBreed під час обробки записуємо в catInfo (зробивши розмітку за допомогою функції createMarkup)
         refs.catInfo.innerHTML = createMarkup(data);
         })
         .catch((err)=>{
@@ -64,10 +65,9 @@ function handleSelect(event) {
         })
         .finally(()=>{
             refs.loader.style.display= "none";
+            refs.catInfo.style.display= "block";
             //refs.loader.classList.add("isHidden");
         })
-    
-    
 }
 
 function createMarkup(data) {
@@ -75,7 +75,7 @@ function createMarkup(data) {
     const{name, description, temperament}=data[0].breeds[0];
 
     return `<div class="cat-card">
-    <img src="${url}" alt="${name} width="600" height="400>
+    <img src="${url}" alt="${name} width="550" height="350>
     <div class="cat-card-info">
         <h1>${name}</h1>
         <p>${description}</p>
@@ -83,3 +83,8 @@ function createMarkup(data) {
         </div>
     </div>` 
 }       
+
+
+
+
+//<link rel="stylesheet" href="./cat.css" />
