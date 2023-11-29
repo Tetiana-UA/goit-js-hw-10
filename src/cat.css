@@ -5,14 +5,25 @@ visibility: hidden;
 .isShown{
 visibility: visible;
 }
+.container{
+    padding: 10px;
+}
 .cat-card{
     margin-top: 20px;
+    display: flex;
+    gap: 20px;
+}
+.cat-card-info {
+    display: flex;
+    flex-direction: column;
+    
 }
 
 .breed-select{
     border: 1px solid rgba(168, 45, 45, 0.84);
     height: 30px;
+    width: 200px;
     border-radius: 5px;
     background-color: white;
-    margin-bottom: 30px;
+    
 }
