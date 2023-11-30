@@ -1,10 +1,6 @@
 //................HTTP-запити...........................................
 
 
-import SlimSelect from 'slim-select';
-import "slim-select/dist/styles";
-
-
 import { fetchBreeds, fetchCatByBreed } from "./cat-api.js";
 import { createMarkup } from "./markup.js"
 
@@ -30,11 +26,8 @@ fetchBreeds()
         refs.breedSelect.innerHTML = breeds.map((breed)=>`<option value="${breed.id}">${breed.name}</option>`)
         .join("")
 
-    //Ініціалізуємо SlimSelect після того як ми його наповнили, потім додаємо слухача по події change 
-    new SlimSelect({
-        select: '#breed'
-    })
-    refs.breedSelect.addEventListener("change", handleSelect);
+        //Після того як ми наповнили breedSelect, додаємо слухача  події change 
+        refs.breedSelect.addEventListener("change", handleSelect);
     })
 
     .catch((err)=>{
@@ -45,11 +38,13 @@ fetchBreeds()
     .finally(()=>{
         refs.breedSelect.style.display= "block";
         refs.loader.style.display= "none";
+        refs.error.style.display= "none";
     }
     );
 
 
-//Коли користувач обирає якусь опцію в селекті, необхідно виконувати запит за повною інформацією про кота,  тобто при події change в викливається функція fetchCatByBreed, якій для параметра рядка запиту breed_ids передається ідентифікатор породи breedId.
+    
+//Оголошення функції для слухача події "change" на breedSelect. Коли користувач обирає якусь опцію в селекті, необхідно виконувати запит за повною інформацією про кота,  тобто при події change в викливається функція fetchCatByBreed, якій для параметра рядка запиту breed_ids передається ідентифікатор породи breedId.
 function handleSelect(event) {
     refs.loader.style.display= "block";
     
@@ -68,6 +63,7 @@ function handleSelect(event) {
         .finally(()=>{
             refs.loader.style.display= "none";
             refs.catInfo.style.display= "block";
+            refs.error.style.display= "none";
             
         })
 }
