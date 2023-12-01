@@ -1,6 +1,5 @@
 //................HTTP-запити...........................................
 
-import  {Notify}  from 'notiflix/build/notiflix-notify-aio';
 import { fetchBreeds, fetchCatByBreed } from "./cat-api.js";
 import { createMarkup } from "./markup.js"
 
@@ -25,6 +24,8 @@ fetchBreeds()
     .then((breeds)=>{
         refs.breedSelect.innerHTML = breeds.map((breed)=>`<option value="${breed.id}">${breed.name}</option>`)
         .join("")
+        //При повторній перезагрузці сторінки після помилки, якщо перед цим вже була загружена сторінка з помилкою
+        refs.error.style.display= "none";
 
         //Після того як ми наповнили breedSelect, додаємо слухача  події change 
         refs.breedSelect.addEventListener("change", handleSelect);
@@ -38,7 +39,7 @@ fetchBreeds()
     .finally(()=>{
         refs.breedSelect.style.display= "block";
         refs.loader.style.display= "none";
-        refs.error.style.display= "none";
+        
     }
     );
 
@@ -46,16 +47,13 @@ fetchBreeds()
     
 //Оголошення функції для слухача події "change" на breedSelect. Коли користувач обирає якусь опцію в селекті, необхідно виконувати запит за повною інформацією про кота,  тобто при події change в викливається функція fetchCatByBreed, якій для параметра рядка запиту breed_ids передається ідентифікатор породи breedId.
 function handleSelect(event) {
+    refs.error.style.display= "none";
     refs.loader.style.display= "block";
     refs.catInfo.innerHTML= ""; //очищаємо картку,щоб поки буде робитися новий запит, старої картки вже не було на екрані
     const breedId = event.target.value; //ідентифікатор породи беремо з вибраної опції селекту breedSelect, на якому висить слухач події (у опцій value=breed.id).
     
     fetchCatByBreed(breedId)
         .then((data)=>{
-        //Перевірка -якщо бекенд повертає порожній масив, то виводимо error  
-        if (data.length === 0) {
-            Notify.failure('Sorry,there are no images matching your search query. Please try again.');
-        }    
         //Результат (data) виклику фунції fetchCatByBreed під час обробки записуємо в catInfo (зробивши розмітку за допомогою функції createMarkup)
         refs.catInfo.innerHTML = createMarkup(data);
         })
@@ -67,9 +65,7 @@ function handleSelect(event) {
         })
         .finally(()=>{
             refs.loader.style.display= "none";
-            refs.catInfo.style.display= "block";
-            refs.error.style.display= "none";
-            
+            refs.catInfo.style.display= "block";           
         })
 }
 
