@@ -1,6 +1,6 @@
 //................HTTP-запити...........................................
 
-
+import  {Notify}  from 'notiflix/build/notiflix-notify-aio';
 import { fetchBreeds, fetchCatByBreed } from "./cat-api.js";
 import { createMarkup } from "./markup.js"
 
@@ -47,18 +47,23 @@ fetchBreeds()
 //Оголошення функції для слухача події "change" на breedSelect. Коли користувач обирає якусь опцію в селекті, необхідно виконувати запит за повною інформацією про кота,  тобто при події change в викливається функція fetchCatByBreed, якій для параметра рядка запиту breed_ids передається ідентифікатор породи breedId.
 function handleSelect(event) {
     refs.loader.style.display= "block";
-    
+    refs.catInfo.innerHTML= ""; //очищаємо картку,щоб поки буде робитися новий запит, старої картки вже не було на екрані
     const breedId = event.target.value; //ідентифікатор породи беремо з вибраної опції селекту breedSelect, на якому висить слухач події (у опцій value=breed.id).
     
     fetchCatByBreed(breedId)
         .then((data)=>{
+        //Перевірка -якщо бекенд повертає порожній масив, то виводимо error  
+        if (data.length === 0) {
+            Notify.failure('Sorry,there are no images matching your search query. Please try again.');
+        }    
         //Результат (data) виклику фунції fetchCatByBreed під час обробки записуємо в catInfo (зробивши розмітку за допомогою функції createMarkup)
         refs.catInfo.innerHTML = createMarkup(data);
         })
+
         .catch((err)=>{
         //Якщо у користувача сталася помилка під час будь-якого HTTP-запиту, наприклад, впала мережа, була втрата пакетів тощо, тобто проміс було відхилено, необхідно відобразити елемент p.error, а при кожному наступному запиті приховувати його. 
         refs.error.style.display= "block";
-        console.log(err)
+        console.log(err);
         })
         .finally(()=>{
             refs.loader.style.display= "none";
