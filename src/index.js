@@ -24,9 +24,7 @@ fetchBreeds()
     .then((breeds)=>{
         refs.breedSelect.innerHTML = breeds.map((breed)=>`<option value="${breed.id}">${breed.name}</option>`)
         .join("")
-        //При повторній перезагрузці сторінки після помилки, якщо перед цим вже була загружена сторінка з помилкою
-        refs.error.style.display= "none";
-
+        
         //Після того як ми наповнили breedSelect, додаємо слухача  події change 
         refs.breedSelect.addEventListener("change", handleSelect);
     })
